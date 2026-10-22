@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f5f7">
+  <title>Dwelling Calculations — Panel Breaker Sizing</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Dwelling Calculations home"><span class="brand-mark">D</span><span>Dwelling<span class="brand-light"> Calculations</span></span></a>
+    <span class="topbar-note"><span class="status-dot"></span> Electrical load estimator</span>
+  </header>
+
+  <main id="top" class="layout">
+    <section class="intro">
+      <p class="eyebrow">POWER DISTRIBUTION / SIZING TOOL</p>
+      <h1>Panel breaker<br><span>sizing, made clear.</span></h1>
+      <p class="lede">Estimate three-phase panel load current, select a standard ampere rating, and check the breaker interrupting rating against the available symmetrical fault current.</p>
+      <div class="formula-card">
+        <div class="formula-icon">ƒx</div>
+        <div><span class="formula-label">THREE-PHASE CURRENT</span><div class="formula">I = <span class="fraction"><span>P</span><span>√3 × E × pf</span></span></div></div>
+      </div>
+      <div class="intro-foot"><span class="line-icon">↳</span> Ampere rating and short-circuit rating are checked independently.</div>
+    </section>
+
+    <section class="calculator" aria-labelledby="calc-title">
+      <div class="calc-heading"><div><p class="eyebrow">CALCULATOR</p><h2 id="calc-title">Panel load inputs</h2></div><span class="step-badge">01 <i>—</i> 03</span></div>
+      <form id="sizing-form">
+        <fieldset class="panel-select"><legend>Panel system</legend>
+          <label class="panel-option"><input type="radio" name="system" value="480" checked><span class="option-box"><strong>480Y / 277 V</strong><small>Lighting panel</small></span></label>
+          <label class="panel-option"><input type="radio" name="system" value="208"><span class="option-box"><strong>208Y / 120 V</strong><small>Power panel</small></span></label>
+        </fieldset>
+        <div class="field-grid">
+          <label class="field"><span>Number of fixtures</span><span class="input-wrap"><input id="fixtures" type="number" min="0" step="1" value="24" required><span class="unit">qty</span></span></label>
+          <label class="field"><span>Watts per fixture</span><span class="input-wrap"><input id="fixture-watts" type="number" min="0" step="1" value="40" required><span class="unit">W</span></span></label>
+          <label class="field"><span>Fixture power factor</span><span class="input-wrap"><input id="fixture-pf" type="number" min="0.01" max="1" step="0.01" value="0.9" required><span class="unit">pf</span></span></label>
+          <label class="field"><span>Number of receptacles</span><span class="input-wrap"><input id="receptacles" type="number" min="0" step="1" value="12" required><span class="unit">qty</span></span></label>
+          <label class="field"><span>VA per receptacle</span><span class="input-wrap"><input id="receptacle-va" type="number" min="0" step="1" value="180" required><span class="unit">VA</span></span><small class="field-hint">Editable planning allowance</small></label>
+        </div>
+        <div class="toggles">
+          <label class="toggle-row"><input id="lighting-continuous" type="checkbox" checked><span class="checkmark"></span><span><strong>Lighting is a continuous load</strong><small>Apply 125% to lighting current</small></span></label>
+          <label class="toggle-row"><input id="receptacle-continuous" type="checkbox"><span class="checkmark"></span><span><strong>Receptacle load is continuous</strong><small>Apply 125% to receptacle current</small></span></label>
+        </div>
+        <div class="field-grid fault-grid">
+          <label class="field"><span>Available symmetrical fault current</span><span class="input-wrap"><input id="fault-current" type="number" min="0" step="0.1" value="10" required><span class="unit">kA RMS</span></span></label>
+          <label class="field"><span>Existing breaker interrupting rating</span><span class="input-wrap"><select id="interrupt-rating"><option value="10">10 kAIC</option><option value="14">14 kAIC</option><option value="18">18 kAIC</option><option value="22">22 kAIC</option><option value="25">25 kAIC</option><option value="35">35 kAIC</option><option value="42">42 kAIC</option><option value="50">50 kAIC</option><option value="65">65 kAIC</option><option value="85">85 kAIC</option><option value="100">100 kAIC</option><option value="150">150 kAIC</option></select><span class="unit">rating</span></span></label>
+        </div>
+        <button class="calculate-button" type="submit">Calculate breaker sizing <span>→</span></button>
+        <p class="form-note">Assumes balanced three-phase loading across all three phases.</p>
+      </form>
+    </section>
+
+    <section id="results" class="results" aria-live="polite" aria-labelledby="result-title">
+      <div class="result-head"><div><p class="eyebrow">SIZING SUMMARY</p><h2 id="result-title">Your calculation</h2></div><span class="result-state" id="result-state"><span class="status-dot"></span> READY</span></div>
+      <div class="result-grid">
+        <article class="result-card primary"><span class="result-label">CALCULATED LOAD CURRENT</span><div class="result-number"><span id="load-current">—</span><small>A</small></div><p>Based on connected load and selected assumptions</p></article>
+        <article class="result-card recommendation"><span class="result-label">TRIP RATING (AT)</span><div class="result-number"><span id="trip-rating">—</span><small>A</small></div><p id="trip-caption">Next standard trip rating at or above design current</p></article>
+        <article class="result-card"><span class="result-label">MINIMUM FRAME CANDIDATE (AF)</span><div class="result-number"><span id="frame-rating">—</span><small>A</small></div><p id="frame-caption">Generic frame class at or above trip rating</p></article>
+        <article class="result-card"><span class="result-label">PANEL LINE VOLTAGE</span><div class="result-number"><span id="line-voltage">480</span><small>V</small></div><p id="panel-caption">480Y / 277 V lighting panel</p></article>
+        <article class="result-card"><span class="result-label">MIN. INTERRUPTING RATING</span><div class="result-number"><span id="required-aic">—</span><small>kA</small></div><p>Must meet or exceed available symmetrical fault current</p></article>
+      </div>
+      <div id="fault-status" class="fault-status"><span class="fault-icon">✓</span><span id="fault-message">Enter panel data to check the interrupting rating.</span></div>
+      <p class="frame-note">Frame rating is a generic minimum frame class (AF) with a trip rating at or above calculated load. Frame/trip combinations and interrupting ratings are manufacturer- and catalog-specific; verify the actual listed breaker and panel combination.</p>
+      <details class="calculation-details"><summary>See calculation steps <span>＋</span></summary><div id="steps" class="steps"></div></details>
+      <p class="disclaimer">Planning estimate only. Confirm load classification, demand factors, conductor ampacity, breaker and panel listings, available fault current, SCCR, coordination, and adopted electrical code with the responsible electrical professional and authority having jurisdiction before installation.</p>
+    </section>
+    <footer><span>DWELLING CALCULATIONS</span><span>POWER &amp; LIGHTING · 3-PHASE</span></footer>
+  </main>
+</body>
+</html>
